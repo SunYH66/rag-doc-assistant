@@ -69,3 +69,20 @@ def retrieve(query, index, top_k=3):
     scores.sort(reverse=True, key=lambda x: x[0])
 
     return [text for score, text in scores[:top_k]]
+
+def build_prompt(query, retrieved_chunks):
+    context = "\n\n".join(retrieved_chunks)
+
+    prompt = f"""
+You are a helpful assistant. Answer the question based ONLY on the context below.
+If the answer is not in the context, say "I don't know."
+
+Context:
+{context}
+
+Question:
+{query}
+
+Answer:
+"""
+    return prompt
