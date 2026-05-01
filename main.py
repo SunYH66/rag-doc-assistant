@@ -3,7 +3,7 @@ from utils import load_pdf, split_text_into_chunks, build_index, rag_pipeline
 
 
 if __name__ == '__main__':
-    pdf_path = Path('file') / 'diffusion_model.pdf'  # 换成你的PDF路径
+    pdf_path = Path('file') / 'diffusion_model.pdf'  
 
     text = load_pdf(pdf_path)
     chunks = split_text_into_chunks(text)
