@@ -1,14 +1,21 @@
 from pathlib import Path
-from utils import load_pdf, split_text_into_chunks
+from utils import load_pdf, split_text_into_chunks, build_index, rag_pipeline
 
-def main():
-    file_path = Path('file') / 'diffusion_model.pdf'
-    text = load_pdf(file_path)
-    chunks = split_text_into_chunks(text)
-
-    print(f'Total text length: {len(text)} characters')
-    print(f'Number of chunks: {len(chunks)}')
-    print(f'First chunk:\n{chunks[0]}')
 
 if __name__ == '__main__':
-    main()
+    pdf_path = Path('file') / 'diffusion_model.pdf'  # 换成你的PDF路径
+
+    text = load_pdf(pdf_path)
+    chunks = split_text_into_chunks(text)
+    index = build_index(chunks)
+
+    while True:
+        query = input("\nAsk a question: ")
+
+        if query.lower() in ["exit", "quit"]:
+            break
+
+        answer = rag_pipeline(query, index, top_k=3)
+
+        print("\nAnswer:")
+        print(answer)

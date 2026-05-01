@@ -1,6 +1,11 @@
 from pypdf import PdfReader
 from openai import OpenAI
 import numpy as np
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+api_key = os.getenv("OPENAI_API_KEY")
 
 def load_pdf(file_path: str) -> str:
     """Load a PDF file and return its text content as a string."""
@@ -33,7 +38,7 @@ def split_text_into_chunks(text: str, chunk_size: int = 800, overlap: int = 100)
     return chunks
 
 
-client = OpenAI()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def get_embedding(text: str, ) -> list[float]:
     """Get the embedding vector for the given text using OpenAI's API."""
@@ -86,3 +91,25 @@ Question:
 Answer:
 """
     return prompt
+
+def generate_answer(prompt: str) -> str:
+    """Generate an answer using the LLM based on the prompt."""
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0
+    )
+
+    return response.choices[0].message.content
+
+def rag_pipeline(query: str, index, top_k: int = 3) -> str:
+    """Run the full RAG pipeline: retrieve -> build prompt -> generate answer."""
+
+    retrieved_chunks = retrieve(query, index, top_k=top_k)
+    prompt = build_prompt(query, retrieved_chunks)
+    answer = generate_answer(prompt)
+
+    return answer
