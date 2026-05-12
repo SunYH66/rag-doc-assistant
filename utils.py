@@ -23,6 +23,25 @@ def load_pdf(file_path: str) -> str:
 
     return text
 
+def load_pdf_pages(file_path: str) -> list[dict]:
+    """Load a PDF file and return text content with page numbers."""
+
+    reader = PdfReader(file_path)
+    pages = []
+
+    for i, page in enumerate(reader.pages):
+        try:
+            page_text = page.extract_text()
+            if page_text:
+                pages.append({
+                    "page": i + 1,
+                    "text": page_text
+                })
+        except Exception as e:
+            print(f"Error extracting text from page {i + 1}: {e}")
+
+    return pages
+
 def split_text_into_chunks(text: str, chunk_size: int = 800, overlap: int = 100) -> list[str]:
     """Split the input text into chunks of specified size with overlap."""
 
